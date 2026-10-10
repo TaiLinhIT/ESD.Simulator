@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "src\\ESD.Simulator.Wpf\\ESD.Simulator.Wpf.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\ESD.Flasher.Wpf\\ESD.Flasher.Wpf.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

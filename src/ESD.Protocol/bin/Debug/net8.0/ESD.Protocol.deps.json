@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "ESD.Protocol/1.0.0": {
+        "runtime": {
+          "ESD.Protocol.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "ESD.Protocol/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

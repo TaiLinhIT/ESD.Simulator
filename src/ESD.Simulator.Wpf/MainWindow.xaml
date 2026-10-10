@@ -1,0 +1,149 @@
+<Window x:Class="ESD.Simulator.Wpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ESD Device Simulator" Width="1100" Height="820"
+        Background="{StaticResource Bg}" Foreground="{StaticResource Text}">
+  <Grid Margin="16">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+
+    <!-- Header -->
+    <DockPanel Grid.Row="0" Margin="0,0,0,10">
+      <TextBlock Text="ESD Device Simulator" FontSize="22" FontWeight="Bold"/>
+      <TextBlock DockPanel.Dock="Right" Text="SIM-V1.0"
+                 Foreground="{StaticResource Muted}" VerticalAlignment="Center"/>
+    </DockPanel>
+
+    <!-- Status bar -->
+    <UniformGrid Grid.Row="1" Columns="4" Margin="0,0,0,8">
+      <Border Background="{StaticResource Panel}" Margin="4" Padding="10">
+        <StackPanel>
+          <TextBlock Text="SERIAL" Foreground="{StaticResource Muted}" FontSize="11"/>
+          <TextBlock x:Name="TxtConn" Text="Disconnected" FontSize="16"/>
+        </StackPanel>
+      </Border>
+      <Border Background="{StaticResource Panel}" Margin="4" Padding="10">
+        <StackPanel>
+          <TextBlock Text="SENT" Foreground="{StaticResource Muted}" FontSize="11"/>
+          <TextBlock x:Name="TxtSent" Text="0" FontSize="16"/>
+        </StackPanel>
+      </Border>
+      <Border Background="{StaticResource Panel}" Margin="4" Padding="10">
+        <StackPanel>
+          <TextBlock Text="ACK OK" Foreground="{StaticResource Muted}" FontSize="11"/>
+          <TextBlock x:Name="TxtAck" Text="0" FontSize="16" Foreground="{StaticResource Green}"/>
+        </StackPanel>
+      </Border>
+      <Border Background="{StaticResource Panel}" Margin="4" Padding="10">
+        <StackPanel>
+          <TextBlock Text="LAST RESPONSE" Foreground="{StaticResource Muted}" FontSize="11"/>
+          <TextBlock x:Name="TxtLast" Text="—" FontSize="14"/>
+        </StackPanel>
+      </Border>
+    </UniformGrid>
+
+    <!-- Main -->
+    <Grid Grid.Row="2">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="300"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+
+      <!-- Left: controls -->
+      <Border Grid.Column="0" Background="{StaticResource Panel}" Margin="4" Padding="12">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+          <StackPanel>
+
+            <!-- Connection -->
+            <TextBlock Text="Serial Port" FontSize="14" FontWeight="Bold"/>
+            <TextBlock Text="COM Port" Foreground="{StaticResource Muted}" FontSize="11"/>
+            <ComboBox x:Name="CbPort"/>
+            <TextBlock Text="Baud Rate" Foreground="{StaticResource Muted}" FontSize="11"/>
+            <ComboBox x:Name="CbBaud"/>
+            <StackPanel Orientation="Horizontal">
+              <Button Content="Refresh"    Click="OnRefresh"/>
+              <Button Content="Connect"    Click="OnConnect"/>
+              <Button Content="Disconnect" Click="OnDisconnect"/>
+            </StackPanel>
+
+            <Separator Margin="0,10"/>
+
+            <!-- Device config -->
+            <TextBlock Text="Device Config" FontSize="14" FontWeight="Bold"/>
+            <TextBlock Text="Device ID" Foreground="{StaticResource Muted}" FontSize="11"/>
+            <TextBox x:Name="TxtDeviceId" Text="1"/>
+            <TextBlock Text="Worker ID" Foreground="{StaticResource Muted}" FontSize="11"/>
+            <TextBox x:Name="TxtWorkerId" Text="W-00123"/>
+            <TextBlock Text="HMAC Key (hex)" Foreground="{StaticResource Muted}" FontSize="11"/>
+            <TextBox x:Name="TxtKey" Text="00112233445566778899AABBCCDDEEFF"/>
+
+            <Separator Margin="0,10"/>
+
+            <!-- Auto scenario -->
+            <TextBlock Text="Auto Scenario" FontSize="14" FontWeight="Bold" Foreground="#FBBF24"/>
+            <TextBlock Text="Interval (ms)" Foreground="{StaticResource Muted}" FontSize="11"/>
+            <TextBox x:Name="TxtInterval" Text="2000"/>
+            <StackPanel Orientation="Horizontal">
+              <Button Content="▶ Start" Click="OnAutoStart" Background="#14532D"/>
+              <Button Content="■ Stop"  Click="OnAutoStop"  Background="#7F1D1D"/>
+            </StackPanel>
+
+            <Separator Margin="0,10"/>
+
+            <!-- Manual commands -->
+            <TextBlock Text="Manual Commands" FontSize="14" FontWeight="Bold"/>
+
+            <TextBlock Text="── Lifecycle ──" Foreground="#60A5FA" FontSize="11" Margin="0,6,0,2"/>
+            <Button Content="HEARTBEAT"     Click="OnHeartbeat"/>
+            <Button Content="STATUS REPORT" Click="OnStatusReport"/>
+
+            <TextBlock Text="── Worker / ESD ──" Foreground="#34D399" FontSize="11" Margin="0,6,0,2"/>
+            <Button Content="WORKER SCAN"   Click="OnWorkerScan"/>
+            <Button Content="ATTACH"        Click="OnAttach"/>
+            <Button Content="DETACH"        Click="OnDetach"/>
+            <Button Content="ESD CHECK"     Click="OnEsdCheck"/>
+
+            <TextBlock Text="── Config ──" Foreground="#FBBF24" FontSize="11" Margin="0,6,0,2"/>
+            <Button Content="GET INFO"      Click="OnGetInfo"/>
+            <Button Content="SET CONFIG"    Click="OnSetConfig"/>
+
+            <TextBlock Text="── Alarm / Station ──" Foreground="#F87171" FontSize="11" Margin="0,6,0,2"/>
+            <TextBlock Text="Alarm Reason" Foreground="{StaticResource Muted}" FontSize="11"/>
+            <ComboBox x:Name="CbAlarmReason">
+              <ComboBoxItem Content="ESD Wristband Fail"  Tag="1" IsSelected="True"/>
+              <ComboBoxItem Content="ESD Footwear Fail"   Tag="2"/>
+              <ComboBoxItem Content="Unauthorized Worker" Tag="3"/>
+              <ComboBoxItem Content="Station Timeout"     Tag="4"/>
+              <ComboBoxItem Content="Manual Trigger"      Tag="255"/>
+            </ComboBox>
+            <Button Content="ALARM TRIGGER"   Click="OnAlarmTrigger"/>
+            <Button Content="ALARM CLEAR"     Click="OnAlarmClear"/>
+            <Button Content="LOCK STATION"    Click="OnLockStation"/>
+            <Button Content="UNLOCK STATION"  Click="OnUnlockStation"/>
+
+            <TextBlock Text="── System ──" Foreground="#C084FC" FontSize="11" Margin="0,6,0,2"/>
+            <Button Content="LOG UPLOAD"      Click="OnLogUpload"/>
+            <Button Content="REBOOT"          Click="OnReboot"/>
+
+          </StackPanel>
+        </ScrollViewer>
+      </Border>
+
+      <!-- Right: log -->
+      <Border Grid.Column="1" Background="{StaticResource Panel}" Margin="4" Padding="12">
+        <DockPanel>
+          <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+            <TextBlock Text="Transaction Log" FontSize="16" FontWeight="Bold"/>
+            <Button DockPanel.Dock="Right" Content="Clear" Click="OnClearLog"/>
+          </DockPanel>
+          <ListBox x:Name="LstLog"
+                   Background="Transparent" Foreground="{StaticResource Text}"
+                   BorderThickness="0" FontFamily="Consolas" FontSize="12"/>
+        </DockPanel>
+      </Border>
+    </Grid>
+  </Grid>
+</Window>

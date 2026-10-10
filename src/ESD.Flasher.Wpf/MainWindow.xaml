@@ -1,0 +1,174 @@
+<Window x:Class="ESD.Flasher.Wpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ESD Firmware Flasher" Width="1100" Height="820"
+        Background="{StaticResource Bg}" Foreground="{StaticResource Text}">
+  <Grid Margin="16">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+
+    <!-- Header -->
+    <DockPanel Grid.Row="0" Margin="0,0,0,10">
+      <TextBlock Text="ESD Firmware Flasher" FontSize="22" FontWeight="Bold"/>
+      <TextBlock DockPanel.Dock="Right" Text="FLASHER-V1.0"
+                 Foreground="{StaticResource Muted}" VerticalAlignment="Center"/>
+    </DockPanel>
+
+    <!-- Status bar -->
+    <UniformGrid Grid.Row="1" Columns="4" Margin="0,0,0,8">
+      <Border Background="{StaticResource Panel}" Margin="4" Padding="10">
+        <StackPanel>
+          <TextBlock Text="SERIAL"        Foreground="{StaticResource Muted}" FontSize="11"/>
+          <TextBlock x:Name="TxtConn"     Text="Disconnected" FontSize="16"/>
+        </StackPanel>
+      </Border>
+      <Border Background="{StaticResource Panel}" Margin="4" Padding="10">
+        <StackPanel>
+          <TextBlock Text="SCENARIO"      Foreground="{StaticResource Muted}" FontSize="11"/>
+          <TextBlock x:Name="TxtStepProgress" Text="—" FontSize="13"/>
+        </StackPanel>
+      </Border>
+      <Border Background="{StaticResource Panel}" Margin="4" Padding="10">
+        <StackPanel>
+          <TextBlock Text="DEVICES"       Foreground="{StaticResource Muted}" FontSize="11"/>
+          <TextBlock x:Name="TxtDeviceProgress" Text="—" FontSize="13"/>
+        </StackPanel>
+      </Border>
+      <Border Background="{StaticResource Panel}" Margin="4" Padding="10">
+        <StackPanel>
+          <TextBlock Text="LAST RESPONSE" Foreground="{StaticResource Muted}" FontSize="11"/>
+          <TextBlock x:Name="TxtLast"     Text="—" FontSize="13"/>
+        </StackPanel>
+      </Border>
+    </UniformGrid>
+
+    <!-- Main -->
+    <Grid Grid.Row="2">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="330"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+
+      <!-- Left panel -->
+      <Border Grid.Column="0" Background="{StaticResource Panel}" Margin="4" Padding="12">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+          <StackPanel>
+
+            <!-- Serial -->
+            <TextBlock Text="Serial Port" FontSize="14" FontWeight="Bold"/>
+            <TextBlock Text="COM Port"  Foreground="{StaticResource Muted}" FontSize="11"/>
+            <ComboBox x:Name="CbPort"/>
+            <TextBlock Text="Baud Rate" Foreground="{StaticResource Muted}" FontSize="11"/>
+            <ComboBox x:Name="CbBaud"/>
+            <StackPanel Orientation="Horizontal">
+              <Button Content="Refresh"    Click="OnRefresh"/>
+              <Button Content="Connect"    Click="OnConnect"    Margin="4,3,0,3"/>
+              <Button Content="Disconnect" Click="OnDisconnect" Margin="4,3,0,3"/>
+            </StackPanel>
+
+            <Separator Margin="0,10"/>
+
+            <!-- Device config -->
+            <TextBlock Text="Device Config" FontSize="14" FontWeight="Bold"/>
+            <TextBlock Text="Device ID (Flash Single)" Foreground="{StaticResource Muted}" FontSize="11"/>
+            <TextBox x:Name="TxtDeviceId" Text="1"/>
+            <TextBlock Text="Worker ID (payload cho Attach/Scan/Detach)" Foreground="{StaticResource Muted}" FontSize="11"/>
+            <TextBox x:Name="TxtWorkerId" Text="W-00123"/>
+            <TextBlock Text="Firmware Version (payload FirmwareUpdate)" Foreground="{StaticResource Muted}" FontSize="11"/>
+            <TextBox x:Name="TxtFirmwareVersion" Text="v1.0.0"/>
+            <TextBlock Text="HMAC Key (hex)" Foreground="{StaticResource Muted}" FontSize="11"/>
+            <TextBox x:Name="TxtKey" Text="00112233445566778899AABBCCDDEEFF"/>
+            <TextBlock Text="Delay giữa các bước (ms)" Foreground="{StaticResource Muted}" FontSize="11"/>
+            <TextBox x:Name="TxtStepDelay" Text="200"/>
+
+            <Separator Margin="0,10"/>
+
+            <!-- Scenario editor -->
+            <TextBlock Text="Scenario" FontSize="14" FontWeight="Bold" Foreground="#60A5FA"/>
+            <TextBlock Text="Thứ tự command sẽ được gửi lần lượt" Foreground="{StaticResource Muted}" FontSize="11" TextWrapping="Wrap"/>
+
+            <ListBox x:Name="LstScenario" Height="120"
+                     Background="#0F172A" Foreground="{StaticResource Text}"
+                     BorderBrush="#334155" FontFamily="Consolas" FontSize="12"/>
+
+            <!-- Add step -->
+            <TextBlock Text="Thêm bước:" Foreground="{StaticResource Muted}" FontSize="11" Margin="0,6,0,2"/>
+            <ComboBox x:Name="CbCommand">
+              <ComboBoxItem Content="Heartbeat"     IsSelected="True"/>
+              <ComboBoxItem Content="StatusReport"/>
+              <ComboBoxItem Content="WorkerScan"/>
+              <ComboBoxItem Content="Attach"/>
+              <ComboBoxItem Content="Detach"/>
+              <ComboBoxItem Content="EsdCheck"/>
+              <ComboBoxItem Content="GetInfo"/>
+              <ComboBoxItem Content="SetConfig"/>
+              <ComboBoxItem Content="AlarmTrigger"/>
+              <ComboBoxItem Content="AlarmClear"/>
+              <ComboBoxItem Content="LockStation"/>
+              <ComboBoxItem Content="UnlockStation"/>
+              <ComboBoxItem Content="LogUpload"/>
+              <ComboBoxItem Content="FirmwareUpdate"/>
+              <ComboBoxItem Content="Reboot"/>
+            </ComboBox>
+            <TextBlock Text="Payload tùy chỉnh (để trống = tự động)" Foreground="{StaticResource Muted}" FontSize="11"/>
+            <TextBox x:Name="TxtStepPayload" Text=""/>
+            <StackPanel Orientation="Horizontal">
+              <Button Content="+ Add"   Click="OnAddStep"    Background="#14532D"/>
+              <Button Content="✕ Remove" Click="OnRemoveStep" Background="#7F1D1D" Margin="4,3,0,3"/>
+              <Button Content="↑"       Click="OnMoveUp"     Margin="4,3,0,3" Padding="8,6"/>
+              <Button Content="↓"       Click="OnMoveDown"   Margin="4,3,0,3" Padding="8,6"/>
+            </StackPanel>
+
+            <Separator Margin="0,10"/>
+
+            <!-- Bulk IDs -->
+            <TextBlock Text="Bulk Flash — Device IDs" FontSize="14" FontWeight="Bold" Foreground="{StaticResource Yellow}"/>
+            <TextBlock Text="Mỗi ID một dòng" Foreground="{StaticResource Muted}" FontSize="11"/>
+            <TextBox x:Name="TxtBulkIds" Height="70" AcceptsReturn="True"
+                     VerticalScrollBarVisibility="Auto" Text="1&#x0a;2&#x0a;3"/>
+
+            <Separator Margin="0,10"/>
+
+            <!-- Actions -->
+            <Button x:Name="BtnFlash" Content="⚡ FLASH SINGLE"
+                    Background="#1D4ED8" FontSize="13" FontWeight="Bold"
+                    Height="38" Click="OnFlashSingle"/>
+            <Button x:Name="BtnBulk"  Content="🔁 BULK FLASH"
+                    Background="#7C3AED" FontSize="13" FontWeight="Bold"
+                    Height="38" Click="OnBulkFlash" Margin="0,4,0,3"/>
+            <Button x:Name="BtnAbort" Content="✖ ABORT"
+                    Background="#991B1B" FontSize="13"
+                    Height="34" Click="OnAbort" IsEnabled="False"/>
+
+            <Separator Margin="0,10"/>
+
+            <!-- Progress -->
+            <TextBlock Text="Progress" FontSize="13" FontWeight="Bold"/>
+            <TextBlock Text="Bước hiện tại" Foreground="{StaticResource Muted}" FontSize="11"/>
+            <ProgressBar x:Name="PbStep" Minimum="0" Maximum="100"/>
+            <TextBlock Text="Thiết bị" Foreground="{StaticResource Muted}" FontSize="11"/>
+            <ProgressBar x:Name="PbDevice" Minimum="0" Maximum="100" Foreground="{StaticResource Yellow}"/>
+            <TextBlock x:Name="TxtStatus" Text="Idle" Foreground="{StaticResource Muted}" FontSize="11"/>
+
+          </StackPanel>
+        </ScrollViewer>
+      </Border>
+
+      <!-- Right: log -->
+      <Border Grid.Column="1" Background="{StaticResource Panel}" Margin="4" Padding="12">
+        <DockPanel>
+          <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+            <TextBlock Text="Transaction Log" FontSize="16" FontWeight="Bold"/>
+            <Button DockPanel.Dock="Right" Content="Clear" Click="OnClearLog"/>
+          </DockPanel>
+          <ListBox x:Name="LstLog"
+                   Background="Transparent" Foreground="{StaticResource Text}"
+                   BorderThickness="0" FontFamily="Consolas" FontSize="12"/>
+        </DockPanel>
+      </Border>
+    </Grid>
+  </Grid>
+</Window>
